@@ -21,10 +21,16 @@ kicadPanelizer is a program for fast automatic PCB panelization proces. That's w
 
 - Rotation
 
-- adds common panel elements from separate file to ease panel composition
+- adds common panel elements from separate file to ease panel composition (for stuff that cannot be repeated, like tooling frame, fiducials, etc...)
+
+- substitutes the text "##PCBNUMBER##" anywhere on the PCB with an incremental number (so the board number can be located even after separation if necessary)
+
+- works with complex board shapes, rotations, v-scoring or routing.
+
+- demo project included with v-score, routing, tooling frame example
 
 
-Some output:
+Some output from the included demo project:
 
 ![output](https://github.com/f4eru/kicadPanelizer/tree/master/demo_files/output/demo_layout-panelized-layerstack_Front.pdf)
 
