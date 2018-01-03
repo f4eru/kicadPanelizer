@@ -30,10 +30,12 @@
 # libs to load
 ##############################################################################################
 
-from pcbnew import LoadBoard, TEXTE_PCB as TEXTE_PCB, DIMENSION as DIMN, \
+from pcbnew import LoadBoard, TEXTE_PCB as TEXTE_PCB, MODULE as MODULE, DIMENSION as DIMN, \
 	Edge_Cuts as Cutout, wxPoint as wxPt, FromMils, FromMM, GetKicadConfigPath as cfgPath
 from os import path as pt
 import re
+
+from parse import *
 
 
 ##############################################################################################
@@ -65,6 +67,10 @@ angles = [0,180] # multiple angle steps can be defined for panels with multiple 
 center_x = 82.5
 center_y = 121
 
+
+# enumeration base for modules
+enumeration_base =0  # 0 to deactivate function
+#enumeration_base =100  # components will have numbers in 101,201,301, ...
 
 
 
@@ -110,6 +116,16 @@ def pcb_instanciate_one_board(pcb, lsItems, vector, angle, center):
 			text = newItem.GetText()
 			text = re.sub(r'\##PCBNUMBER##',str(boardcount),text)
 			newItem.SetText(text)
+
+		# renumerate modules including the PCB number
+		if type(newItem) is MODULE:
+			if enumeration_base:
+				ref = newItem.GetReference()
+				match = re.match(r"(\D+)(\d+)", ref)
+				if match:
+					items = match.groups()
+					ref = "%s%i"%((items[0]).encode('ascii', 'ignore'), int(items[1])+boardcount * enumeration_base)
+					newItem.SetReference(ref)
 	
 	return
 
