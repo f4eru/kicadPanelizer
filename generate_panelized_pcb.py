@@ -108,8 +108,17 @@ def pcb_instanciate_one_board(pcb, lsItems, vector, angle, center):
 	boardcount = boardcount+1;
 	
 	for Item in lsItems:
-		newItem = Item.Duplicate()
-		pcb.Add(newItem)
+		#newItem = Item.Duplicate()
+		#pcb.Add(newItem)
+		# temporary, due to Kicad inconsistency
+		if type(Item) is MODULE:
+			newItem = pcbnew.MODULE(Item)  # creates new module n as a copy of m
+			pcb.Add(newItem)
+			newItem.SetPosition(Item.GetPosition())
+		else:
+			newItem = Item.Duplicate()
+			pcb.Add(newItem)
+		#end  temporary, due to Kicad inconsistency
 		if angle:
 			newItem.Rotate(center, angle*10) # kicad uses decidegrees ....
 		newItem.Move(vector)
