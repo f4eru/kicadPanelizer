@@ -70,8 +70,9 @@ center_x = 82.5
 center_y = 121
 
 
-# enumeration base for modules
-enumeration_base =0  # 0 to deactivate function
+# how to renumber components, choose one option:
+enumeration_base =0  # 0 to deactivate renumbering function
+#enumeration_base ='!'  # '!' or any other key character to replace that character with the number. Components will hve to have this key in the number like R!01 for R101, R102, etc...
 #enumeration_base =100  # components will have numbers in 101,201,301, ...
 
 
@@ -123,6 +124,16 @@ def pcb_instanciate_one_board(pcb, lsItems, vector, angle, center):
 		if type(newItem) is MODULE:
 			if enumeration_base:
 				ref = newItem.GetReference()
+				if isinstance(enumeration_base, numbers.Number):
+					match = re.match(r"(\D+)(\d+)", ref)
+					if match:
+						items = match.groups()
+						ref_letter = (items[0]).encode('ascii', 'ignore')
+						ref_num = int(items[1])
+						ref = "%s%i"%(ref_letter, ref_num +boardcount * enumeration_base)
+				else:
+					ref = re.sub(enumeration_base,str(boardcount),ref)
+				newItem.SetReference(ref)
 	
 	return
 
