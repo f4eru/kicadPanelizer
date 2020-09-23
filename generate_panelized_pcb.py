@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- encoding: utf-8 -*-
 # -*- coding: utf-8 -*-
 
@@ -36,6 +36,8 @@ from os import path as pt
 import re
 
 from parse import *
+import pcbnew
+import numbers
 
 
 ##############################################################################################
@@ -88,14 +90,14 @@ def brdItemize(pcb):
 		for ItemStr in ('Drawings', 'Tracks', 'Modules'):
 			for idx, Item in enumerate(getattr(pcb, 'Get'+ItemStr)()):
 				if type(Item)==nullType:
-					raise TypeError, "Null Object Error#%i, expected %s Type…" % (idx+1, ItemStr[:-1])
+					raise(TypeError, "Null Object Error#%i, expected %s Type…" % (idx+1, ItemStr[:-1]))
 				lsItems.append(Item)
 		nZones = pcb.GetAreaCount()
 		if nZones:
 			for idx in range(nZones):
 				Zone = pcb.GetArea(idx)
 				if type(Zone)==nullType:
-					raise TypeError, "Null Object Error#%i, expected Zone/Area Type…" % (idx+1,)
+					raise(TypeError, "Null Object Error#%i, expected Zone/Area Type…" % (idx+1,))
 				lsItems.append(Zone)
 		return lsItems
 
@@ -121,18 +123,13 @@ def pcb_instanciate_one_board(pcb, lsItems, vector, angle, center):
 		if type(newItem) is MODULE:
 			if enumeration_base:
 				ref = newItem.GetReference()
-				match = re.match(r"(\D+)(\d+)", ref)
-				if match:
-					items = match.groups()
-					ref = "%s%i"%((items[0]).encode('ascii', 'ignore'), int(items[1])+boardcount * enumeration_base)
-					newItem.SetReference(ref)
 	
 	return
 
 # instanciates multiple object lists on the board, stepping displacements
 def pcb_instanciate_multiple_boards(pcb, lsItems, nx, ny, step_vector, offset_vector, angle, center):
 	if nx<1 or(ny<1):
-		raise ValueError, "Columns(%i) or Rows(%i) cannot be less than 1…" % (nx, ny)
+		raise(ValueError, "Columns(%i) or Rows(%i) cannot be less than 1…" % (nx, ny))
 		
 	for y in range(ny):
 		for x in range(nx):
